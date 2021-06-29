@@ -67,3 +67,43 @@ def beijing_data2tensor(train, valid, test):
     X_test, y_test = split_by_seq(test)
 
     return (X_train, y_train), (X_valid, y_valid), (X_test, y_test)
+
+def stock_preprocess(file):
+    data = pd.read_csv(file, index_col=0, parse_dates=True)
+
+    scaler = StandardScaler()
+    transformed_data = data[['Close', 'Open', 'High', 'Low', 'Volume']]
+    transformed_data = scaler.fit_transform(transformed_data)
+    transformed_data = pd.DataFrame(transformed_data, columns=columns)
+
+    return transformed_data
+
+def stock_data_split(transformed_data):
+    train_start = dt.date(1996, 8, 9)
+    train_end = dt.date(2011, 12, 31)
+    train = transformed_data.loc[train_start:train_end]
+
+    val_start = dt.date(2012, 1, 1)
+    val_end = dt.date(2016, 12, 31)
+    valid = transformed_data.loc[val_start:val_end]
+
+    test_start = dt.date(2016, 1, 1)
+    test_end = dt.date(2020, 4, 7)
+    test = transformed_data.loc[test_start:test_end]
+
+    return train, valid, test
+
+def stock_data2tensor(train, valid, test):
+    def convert2torch(data, time_step):
+        X_data, y_data = list(), list()
+        for i in range(time_step, len(data)):
+            X_data.append(data[i - time_step:i])
+            y_data.append(data[i][0])
+        X_data, y_data = torch.Tensor(X_data), torch.Tensor(y_data)
+        return X_data, y_data
+
+    X_train, y_train = convert2torch(train, 50)
+    X_valid, y_valid = convert2torch(valid, 50)
+    X_test, y_test = convert2torch(test, 50)
+
+    return (X_train, y_train), (X_valid, y_valid), (X_test, y_test)
