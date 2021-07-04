@@ -76,7 +76,7 @@ def stock_preprocess(file):
     transformed_data = data[['Close', 'Open', 'High', 'Low', 'Volume']]
     transformed_data = scaler.fit_transform(transformed_data)
     transformed_data = pd.DataFrame(transformed_data, columns=columns)
-    transformed_data.index = data['Date']
+    transformed_data.index = data.index
     return transformed_data
 
 def stock_data_split(transformed_data):
