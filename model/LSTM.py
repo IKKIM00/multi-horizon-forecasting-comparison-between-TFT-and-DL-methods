@@ -21,9 +21,8 @@ class LSTM(nn.Module):
         self.act = nn.ReLU()
 
     def forward(self, inp):
-        h0, c0 = self.init_hidden()
-        b, _, _ = inp.size()
-        self.b = b
+        h0, c0 = self.init_hidden(inp)
+
         output, _ = self.lstm(inp, (h0, c0))
         output = self.flatten(output[:, -1, :])
         output = self.act(self.bn1(self.fc1(output)))
@@ -31,9 +30,10 @@ class LSTM(nn.Module):
         output = self.fc3(output)
         return output
 
-    def init_hidden(self, ):
-        h0 = torch.zeros(self.num_layers, self.b, self.hidden_dim)
-        c0 = torch.zeros(self.num_layers, self.b, self.hidden_dim)
+    def init_hidden(self, inp):
+        b, _, _ = inp.size()
+        h0 = torch.zeros(self.num_layers, b, self.hidden_dim)
+        c0 = torch.zeros(self.num_layers, b, self.hidden_dim)
         return [t for t in (h0, c0)]
 
 
