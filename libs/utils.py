@@ -71,6 +71,7 @@ def beijing_data2tensor(train, valid, test):
 
 def stock_preprocess(file):
     data = pd.read_csv(file, index_col=0, parse_dates=True)
+    data = data[['Close', 'Open', 'High', 'Low', 'Volume']]
     return data
 
 def stock_data_split(transformed_data):
