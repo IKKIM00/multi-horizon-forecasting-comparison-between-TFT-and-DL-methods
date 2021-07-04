@@ -72,6 +72,7 @@ def stock_preprocess(file):
     data = pd.read_csv(file, index_col=0, parse_dates=True)
 
     scaler = StandardScaler()
+    columns = ['Close', 'Open', 'High', 'Low', 'Volume']
     transformed_data = data[['Close', 'Open', 'High', 'Low', 'Volume']]
     transformed_data = scaler.fit_transform(transformed_data)
     transformed_data = pd.DataFrame(transformed_data, columns=columns)
