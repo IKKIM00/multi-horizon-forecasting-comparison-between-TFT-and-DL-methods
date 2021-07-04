@@ -27,7 +27,7 @@ def beijing_preprocess(file):
         hour = int(data.iloc[i]['hour'])
         date_list.append(dt.datetime(year, month, day, hour))
     transformed_data.index = date_list
-    return transformed_data
+    return transformed_data, scaler
 
 def beijing_data_split(transformed_data):
     train_start = dt.datetime(2010, 1, 1, 0)
@@ -77,7 +77,7 @@ def stock_preprocess(file):
     transformed_data = scaler.fit_transform(transformed_data)
     transformed_data = pd.DataFrame(transformed_data, columns=columns)
     transformed_data.index = data.index
-    return transformed_data
+    return transformed_data, scaler
 
 def stock_data_split(transformed_data):
     train_start = dt.date(1996, 8, 9)
