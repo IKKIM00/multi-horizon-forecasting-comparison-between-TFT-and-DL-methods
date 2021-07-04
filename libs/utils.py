@@ -40,7 +40,7 @@ def beijing_data_split(transformed_data):
 
 def beijing_data2tensor(train, valid, test):
 
-    def split_by_seq(transformed_df):
+    def convert2torch(transformed_df):
         X_data, y_data = list(), list()
         for i in tqdm(range(0, len(transformed_df) - 36)):
             pm = transformed_df.iloc[i: i + 24]['pm2.5']
@@ -67,14 +67,16 @@ def beijing_data2tensor(train, valid, test):
 
     train_transformed, _ = transform(train)
     train_transformed['cbwd'] = train['cbwd']
-    valid_transformed, _ = transform(valid)
-    valid_transformed = valid['cbwd']
-    test_transformed, test_scaler = transform(test)
-    test_transformed = test['cbwd']
 
-    X_train, y_train = split_by_seq(train_transformed)
-    X_valid, y_valid = split_by_seq(valid_transformed)
-    X_test, y_test = split_by_seq(test_transformed)
+    valid_transformed, _ = transform(valid)
+    valid_transformed['cbwd'] = valid['cbwd']
+
+    test_transformed, test_scaler = transform(test)
+    test_transformed['cbwd'] = test['cbwd']
+
+    X_train, y_train = convert2torch(train_transformed)
+    X_valid, y_valid = convert2torch(valid_transformed)
+    X_test, y_test = convert2torch(test_transformed)
 
     return (X_train, y_train), (X_valid, y_valid), (X_test, y_test), test_scaler
 
@@ -131,3 +133,36 @@ def stock_data2tensor(train, valid, test):
 def ET_preprocess(data_dir):
     return pd.read_csv(data_dir, pare_dates=True, index_col=0)
 
+def ET_data_split(data):
+    train_start = dt.datetime(2016, 7, 1, 0, 0)
+    train_end = dt.datetime(2017, 6, 30, 23, 45)
+
+    valid_start = dt.datetime(2017, 7, 1, 0, 0)
+    valid_end = dt.datetime(2018, 1, 31, 23, 45)
+
+    test_start = dt.datetime(2018, 2, 1, 0, 0)
+    test_end = dt.datetime(2018, 6, 26, 19, 45)
+
+    train = data.loc[train_start: train_end]
+    valid = data.loc[valid_start: valid_end]
+    test = data.loc[test_start: test_end]
+    return train, valid, test
+
+def ET_data2tensor(train, valid, test):
+
+    def convert2torch(transformed_df):
+        X_data, y_data = list(), list()
+        for i in tqdm(range(0, len(transformed_df) - 36)):
+            pm = transformed_df.iloc[i: i + 24]['pm2.5']
+            dewp = transformed_df.iloc[i: i + 24]['DEWP']
+            temp = transformed_df.iloc[i: i + 24]['TEMP']
+            pres = transformed_df.iloc[i: i + 24]['PRES']
+            lws = transformed_df.iloc[i: i + 24]['Iws']
+            cbwd = transformed_df.iloc[i: i + 24]['cbwd']
+            Is = transformed_df.iloc[i: i + 24]['Is']
+            Ir = transformed_df.iloc[i: i + 24]['Ir']
+            X_data.append([pm, dewp, temp, pres, lws, cbwd, Is, Ir])
+
+            pm = transformed_df.iloc[i + 24]['pm2.5']
+            y_data.append(pm)
+        return torch.Tensor(X_data), torch.Tensor(y_data)
