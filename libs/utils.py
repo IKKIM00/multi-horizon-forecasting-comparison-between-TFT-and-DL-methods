@@ -42,7 +42,7 @@ def beijing_data2tensor(train, valid, test):
 
     def convert2torch(transformed_df):
         X_data, y_data = list(), list()
-        for i in tqdm(range(0, len(transformed_df) - 36)):
+        for i in tqdm(range(0, len(transformed_df) - 24)):
             pm = transformed_df.iloc[i: i + 24]['pm2.5']
             dewp = transformed_df.iloc[i: i + 24]['DEWP']
             temp = transformed_df.iloc[i: i + 24]['TEMP']
@@ -152,17 +152,16 @@ def ET_data2tensor(train, valid, test):
 
     def convert2torch(transformed_df):
         X_data, y_data = list(), list()
-        for i in tqdm(range(0, len(transformed_df) - 36)):
-            pm = transformed_df.iloc[i: i + 24]['pm2.5']
-            dewp = transformed_df.iloc[i: i + 24]['DEWP']
-            temp = transformed_df.iloc[i: i + 24]['TEMP']
-            pres = transformed_df.iloc[i: i + 24]['PRES']
-            lws = transformed_df.iloc[i: i + 24]['Iws']
-            cbwd = transformed_df.iloc[i: i + 24]['cbwd']
-            Is = transformed_df.iloc[i: i + 24]['Is']
-            Ir = transformed_df.iloc[i: i + 24]['Ir']
-            X_data.append([pm, dewp, temp, pres, lws, cbwd, Is, Ir])
+        for i in tqdm(range(0, len(transformed_df) - 20)):
+            hufl = transformed_df.iloc[i: i + 20]['HUFL']
+            hull = transformed_df.iloc[i: i + 20]['HULL']
+            mufl = transformed_df.iloc[i: i + 20]['MUFL']
+            mull = transformed_df.iloc[i: i + 20]['MULL']
+            lufl = transformed_df.iloc[i: i + 20]['LUFL']
+            lull = transformed_df.iloc[i: i + 20]['LULL']
 
-            pm = transformed_df.iloc[i + 24]['pm2.5']
-            y_data.append(pm)
+            X_data.append([hufl, hull, mufl, mull, lufl, lull])
+
+            ot = transformed_df.iloc[i + 24]['OT']
+            y_data.append(ot)
         return torch.Tensor(X_data), torch.Tensor(y_data)
