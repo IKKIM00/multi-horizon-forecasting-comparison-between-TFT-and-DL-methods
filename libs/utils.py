@@ -63,6 +63,7 @@ def beijing_data2tensor(train, valid, test):
         scaler = StandardScaler()
         transformed_data = scaler.fit_transform(transformed_data)
         transformed_data = pd.DataFrame(transformed_data, columns=columns)
+        transformed_data['cbwd'] = data['cbwd']
         return transformed_data, scaler
 
     train_transformed, _ = transform(train)
