@@ -8,16 +8,11 @@ import torch
 def beijing_preprocess(file):
     data = pd.read_csv(file, index_col=0)
     data = data.fillna(0)
-    columns = ['pm2.5', 'DEWP', 'TEMP', 'PRES', 'Iws', 'Is', 'Ir']
-    scaler = StandardScaler()
-    transformed_data = data[['pm2.5', 'DEWP', 'TEMP', 'PRES', 'Iws', 'Is', 'Ir']]
-    transformed_data = scaler.fit_transform(transformed_data)
-    transformed_data = pd.DataFrame(transformed_data, columns=columns)
 
     le = LabelEncoder()
     cbwd = data['cbwd']
     transformed_cbwd = le.fit_transform(cbwd)
-    transformed_data['cbwd'] = transformed_cbwd
+    data['cbwd'] = transformed_cbwd
 
     date_list = list()
     for i in range(len(data)):
@@ -26,8 +21,8 @@ def beijing_preprocess(file):
         day = int(data.iloc[i]['day'])
         hour = int(data.iloc[i]['hour'])
         date_list.append(dt.datetime(year, month, day, hour))
-    transformed_data.index = date_list
-    return transformed_data, scaler
+    data.index = date_list
+    return data, scaler
 
 def beijing_data_split(transformed_data):
     train_start = dt.datetime(2010, 1, 1, 0)
@@ -62,7 +57,13 @@ def beijing_data2tensor(train, valid, test):
             y_data.append(pm)
         return torch.Tensor(X_data), torch.Tensor(y_data)
 
-    X_train, y_train = split_by_seq(train)
+    columns = ['pm2.5', 'DEWP', 'TEMP', 'PRES', 'Iws', 'Is', 'Ir']
+    scaler = StandardScaler()
+    transformed_data = train[['pm2.5', 'DEWP', 'TEMP', 'PRES', 'Iws', 'Is', 'Ir']]
+    transformed_data = scaler.fit_transform(transformed_data)
+    transformed_data = pd.DataFrame(transformed_data, columns=columns)
+
+    X_train, y_train = split_by_seq(transformed_data)
     X_valid, y_valid = split_by_seq(valid)
     X_test, y_test = split_by_seq(test)
 
@@ -70,14 +71,7 @@ def beijing_data2tensor(train, valid, test):
 
 def stock_preprocess(file):
     data = pd.read_csv(file, index_col=0, parse_dates=True)
-
-    scaler = StandardScaler()
-    columns = ['Close', 'Open', 'High', 'Low', 'Volume']
-    transformed_data = data[['Close', 'Open', 'High', 'Low', 'Volume']]
-    transformed_data = scaler.fit_transform(transformed_data)
-    transformed_data = pd.DataFrame(transformed_data, columns=columns)
-    transformed_data.index = data.index
-    return transformed_data, scaler
+    return data
 
 def stock_data_split(transformed_data):
     train_start = dt.date(1996, 8, 9)
@@ -103,7 +97,14 @@ def stock_data2tensor(train, valid, test):
         X_data, y_data = torch.Tensor(X_data), torch.Tensor(y_data)
         return X_data, y_data
 
-    X_train, y_train = convert2torch(train, 50)
+    scaler = StandardScaler()
+    columns = ['Close', 'Open', 'High', 'Low', 'Volume']
+    transformed_data = train[['Close', 'Open', 'High', 'Low', 'Volume']]
+    transformed_data = scaler.fit_transform(transformed_data)
+    transformed_data = pd.DataFrame(transformed_data, columns=columns)
+    transformed_data.index = data.index
+
+    X_train, y_train = convert2torch(transformed_data, 50)
     X_valid, y_valid = convert2torch(valid, 50)
     X_test, y_test = convert2torch(test, 50)
 
