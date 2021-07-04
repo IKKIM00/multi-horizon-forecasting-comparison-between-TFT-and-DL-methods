@@ -98,11 +98,12 @@ def stock_data2tensor(train, valid, test):
         return X_data, y_data
 
     scaler = StandardScaler()
+    idx = train.idx
     columns = ['Close', 'Open', 'High', 'Low', 'Volume']
     transformed_data = train[['Close', 'Open', 'High', 'Low', 'Volume']]
     transformed_data = scaler.fit_transform(transformed_data)
     transformed_data = pd.DataFrame(transformed_data, columns=columns)
-    transformed_data.index = data.index
+    transformed_data.index = idx
 
     X_train, y_train = convert2torch(transformed_data, 50)
     X_valid, y_valid = convert2torch(valid, 50)
