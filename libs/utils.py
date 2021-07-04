@@ -63,12 +63,14 @@ def beijing_data2tensor(train, valid, test):
         scaler = StandardScaler()
         transformed_data = scaler.fit_transform(transformed_data)
         transformed_data = pd.DataFrame(transformed_data, columns=columns)
-        transformed_data['cbwd'] = data['cbwd']
         return transformed_data, scaler
 
     train_transformed, _ = transform(train)
+    train_transformed['cbwd'] = train['cbwd']
     valid_transformed, _ = transform(valid)
+    valid_transformed = valid['cbwd']
     test_transformed, test_scaler = transform(test)
+    test_transformed = test['cbwd']
 
     X_train, y_train = split_by_seq(train_transformed)
     X_valid, y_valid = split_by_seq(valid_transformed)
@@ -125,3 +127,7 @@ def stock_data2tensor(train, valid, test):
     X_test, y_test = convert2torch(test_transformed, 50)
 
     return (X_train, y_train), (X_valid, y_valid), (X_test, y_test), test_scaler
+
+def ET_preprocess(data_dir):
+    return pd.read_csv(data_dir, pare_dates=True, index_col=0)
+
