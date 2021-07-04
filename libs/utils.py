@@ -42,7 +42,7 @@ def beijing_data2tensor(train, valid, test):
 
     def convert2torch(transformed_df):
         X_data, y_data = list(), list()
-        for i in tqdm(range(0, len(transformed_df) - 24)):
+        for i in tqdm(range(0, len(transformed_df) - 25)):
             pm = transformed_df.iloc[i: i + 24]['pm2.5']
             dewp = transformed_df.iloc[i: i + 24]['DEWP']
             temp = transformed_df.iloc[i: i + 24]['TEMP']
@@ -152,7 +152,7 @@ def ET_data2tensor(train, valid, test):
 
     def convert2torch(transformed_df):
         X_data, y_data = list(), list()
-        for i in tqdm(range(0, len(transformed_df) - 20)):
+        for i in tqdm(range(0, len(transformed_df) - 21)):
             hufl = transformed_df.iloc[i: i + 20]['HUFL']
             hull = transformed_df.iloc[i: i + 20]['HULL']
             mufl = transformed_df.iloc[i: i + 20]['MUFL']
