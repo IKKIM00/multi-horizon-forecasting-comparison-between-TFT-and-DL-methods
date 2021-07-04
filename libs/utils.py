@@ -22,7 +22,7 @@ def beijing_preprocess(file):
         hour = int(data.iloc[i]['hour'])
         date_list.append(dt.datetime(year, month, day, hour))
     data.index = date_list
-    return data, scaler
+    return data
 
 def beijing_data_split(transformed_data):
     train_start = dt.datetime(2010, 1, 1, 0)
