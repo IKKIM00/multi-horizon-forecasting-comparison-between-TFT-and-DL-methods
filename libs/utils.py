@@ -165,3 +165,21 @@ def ET_data2tensor(train, valid, test):
             ot = transformed_df.iloc[i + 24]['OT']
             y_data.append(ot)
         return torch.Tensor(X_data), torch.Tensor(y_data)
+
+    columns = ['HUFL', 'HULL', 'MUFL', 'MULL', 'LUFL', 'LULL', 'OT']
+    def transform(data):
+        scaler = StandardScaler()
+        transformed_data = data[['HUFL', 'HULL', 'MUFL', 'MULL', 'LUFL', 'LULL', 'OT']]
+        transformed_data = scaler.fit_transform(transformed_data)
+        transformed_data = pd.DataFrame(transformed_data, columns=columns)
+        return transformed_data, scaler
+
+    train_transformed, _ = transform(train)
+    valid_transformed, _ = transform(valid)
+    test_transformed, test_scaler = transform(test)
+
+    X_train, y_train = convert2torch(train_transformed)
+    X_valid, y_valid = convert2torch(valid_transformed)
+    X_test, y_test = convert2torch(test_transformed)
+
+    return (X_train, y_train), (X_valid, y_valid), (X_test, y_test), test_scaler
