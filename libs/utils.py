@@ -7,7 +7,7 @@ import torch
 
 def beijing_preprocess(file):
     data = pd.read_csv(file, index_col=0)
-
+    data = data.fillna(0)
     columns = ['pm2.5', 'DEWP', 'TEMP', 'PRES', 'Iws', 'Is', 'Ir']
     scaler = StandardScaler()
     transformed_data = data[['pm2.5', 'DEWP', 'TEMP', 'PRES', 'Iws', 'Is', 'Ir']]
