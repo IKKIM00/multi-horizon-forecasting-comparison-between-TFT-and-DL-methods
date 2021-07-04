@@ -58,16 +58,22 @@ def beijing_data2tensor(train, valid, test):
         return torch.Tensor(X_data), torch.Tensor(y_data)
 
     columns = ['pm2.5', 'DEWP', 'TEMP', 'PRES', 'Iws', 'Is', 'Ir']
-    scaler = StandardScaler()
-    transformed_data = train[['pm2.5', 'DEWP', 'TEMP', 'PRES', 'Iws', 'Is', 'Ir']]
-    transformed_data = scaler.fit_transform(transformed_data)
-    transformed_data = pd.DataFrame(transformed_data, columns=columns)
+    def transform(data):
+        transformed_data = data[['pm2.5', 'DEWP', 'TEMP', 'PRES', 'Iws', 'Is', 'Ir']]
+        scaler = StandardScaler()
+        transformed_data = scaler.fit_transform(transformed_data)
+        transformed_data = pd.DataFrame(transformed_data, columns=columns)
+        return transformed_data, scaler
 
-    X_train, y_train = split_by_seq(transformed_data)
-    X_valid, y_valid = split_by_seq(valid)
-    X_test, y_test = split_by_seq(test)
+    train_transformed, _ = transform(train)
+    valid_transformed, _ = transform(valid)
+    test_transformed, test_scaler = transform(test)
 
-    return (X_train, y_train), (X_valid, y_valid), (X_test, y_test)
+    X_train, y_train = split_by_seq(train_transformed)
+    X_valid, y_valid = split_by_seq(valid_transformed)
+    X_test, y_test = split_by_seq(test_transformed)
+
+    return (X_train, y_train), (X_valid, y_valid), (X_test, y_test), test_scaler
 
 def stock_preprocess(file):
     data = pd.read_csv(file, index_col=0, parse_dates=True)
@@ -98,16 +104,22 @@ def stock_data2tensor(train, valid, test):
         X_data, y_data = torch.Tensor(X_data), torch.Tensor(y_data)
         return X_data, y_data
 
-    scaler = StandardScaler()
-    idx = train.index
     columns = ['Close', 'Open', 'High', 'Low', 'Volume']
-    transformed_data = train[['Close', 'Open', 'High', 'Low', 'Volume']]
-    transformed_data = scaler.fit_transform(transformed_data)
-    transformed_data = pd.DataFrame(transformed_data, columns=columns)
-    transformed_data.index = idx
+    def transform(data):
+        scaler = StandardScaler()
+        idx = data.index
+        transformed_data = data[['Close', 'Open', 'High', 'Low', 'Volume']]
+        transformed_data = scaler.fit_transform(transformed_data)
+        transformed_data = pd.DataFrame(transformed_data, columns=columns)
+        transformed_data.index = idx
+    return transformed_data, scaler
 
-    X_train, y_train = convert2torch(transformed_data, 50)
-    X_valid, y_valid = convert2torch(valid, 50)
-    X_test, y_test = convert2torch(test, 50)
+    train_transformed, _ = transform(train)
+    valid_transformed, _ = transform(valid)
+    test_transformed, test_scaler = transform(test)
 
-    return (X_train, y_train), (X_valid, y_valid), (X_test, y_test)
+    X_train, y_train = convert2torch(train_transformed, 50)
+    X_valid, y_valid = convert2torch(valid_transformed, 50)
+    X_test, y_test = convert2torch(test_transformed, 50)
+
+    return (X_train, y_train), (X_valid, y_valid), (X_test, y_test), test_scaler
