@@ -162,7 +162,7 @@ def ET_data2tensor(train, valid, test):
 
             X_data.append([hufl, hull, mufl, mull, lufl, lull])
 
-            ot = transformed_df.iloc[i + 24]['OT']
+            ot = transformed_df.iloc[i + 21]['OT']
             y_data.append(ot)
         return torch.Tensor(X_data), torch.Tensor(y_data)
 
