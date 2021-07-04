@@ -131,7 +131,7 @@ def stock_data2tensor(train, valid, test):
     return (X_train, y_train), (X_valid, y_valid), (X_test, y_test), test_scaler
 
 def ET_preprocess(data_dir):
-    return pd.read_csv(data_dir, pare_dates=True, index_col=0)
+    return pd.read_csv(data_dir, parse_dates=True, index_col=0)
 
 def ET_data_split(data):
     train_start = dt.datetime(2016, 7, 1, 0, 0)
