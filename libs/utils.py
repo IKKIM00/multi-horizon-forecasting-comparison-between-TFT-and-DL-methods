@@ -98,8 +98,8 @@ def stock_data2tensor(train, valid, test):
     def convert2torch(data, time_step):
         X_data, y_data = list(), list()
         for i in range(time_step, len(data)):
-            X_data.append(data[i - time_step:i])
-            y_data.append(data[i][0])
+            X_data.append(data.iloc[i - time_step:i])
+            y_data.append(data.iloc[i][0])
         X_data, y_data = torch.Tensor(X_data), torch.Tensor(y_data)
         return X_data, y_data
 
