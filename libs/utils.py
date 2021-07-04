@@ -98,7 +98,7 @@ def stock_data2tensor(train, valid, test):
         return X_data, y_data
 
     scaler = StandardScaler()
-    idx = train.idx
+    idx = train.index
     columns = ['Close', 'Open', 'High', 'Low', 'Volume']
     transformed_data = train[['Close', 'Open', 'High', 'Low', 'Volume']]
     transformed_data = scaler.fit_transform(transformed_data)
