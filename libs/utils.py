@@ -66,13 +66,13 @@ def beijing_data2tensor(train, valid, test):
         return transformed_data, scaler
 
     train_transformed, _ = transform(train)
-    train_transformed['cbwd'] = train['cbwd']
+    train_transformed['cbwd'] = train['cbwd'].values
 
     valid_transformed, _ = transform(valid)
-    valid_transformed['cbwd'] = valid['cbwd']
+    valid_transformed['cbwd'] = valid['cbwd'].values
 
     test_transformed, test_scaler = transform(test)
-    test_transformed['cbwd'] = test['cbwd']
+    test_transformed['cbwd'] = test['cbwd'].values
 
     X_train, y_train = convert2torch(train_transformed)
     X_valid, y_valid = convert2torch(valid_transformed)
