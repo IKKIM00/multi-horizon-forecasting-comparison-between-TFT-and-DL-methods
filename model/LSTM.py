@@ -34,7 +34,7 @@ class LSTM(nn.Module):
         b, _, _ = inp.size()
         h0 = torch.zeros(self.num_layers, b, self.hidden_dim)
         c0 = torch.zeros(self.num_layers, b, self.hidden_dim)
-        return [t for t in (h0, c0)]
+        return [t for t in (h0.cuda(), c0.cuda())]
 
 
 if __name__=="__main__":
