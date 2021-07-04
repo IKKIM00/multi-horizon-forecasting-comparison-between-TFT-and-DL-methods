@@ -96,6 +96,7 @@ def stock_data_split(transformed_data):
     return train, valid, test
 
 def stock_data2tensor(train, valid, test):
+
     def convert2torch(data, time_step):
         X_data, y_data = list(), list()
         for i in range(time_step, len(data)):
@@ -104,15 +105,15 @@ def stock_data2tensor(train, valid, test):
         X_data, y_data = torch.Tensor(X_data), torch.Tensor(y_data)
         return X_data, y_data
 
-    columns = ['Close', 'Open', 'High', 'Low', 'Volume']
     def transform(data):
+        columns = ['Close', 'Open', 'High', 'Low', 'Volume']
         scaler = StandardScaler()
         idx = data.index
         transformed_data = data[['Close', 'Open', 'High', 'Low', 'Volume']]
         transformed_data = scaler.fit_transform(transformed_data)
         transformed_data = pd.DataFrame(transformed_data, columns=columns)
         transformed_data.index = idx
-    return transformed_data, scaler
+        return transformed_data, scaler
 
     train_transformed, _ = transform(train)
     valid_transformed, _ = transform(valid)
