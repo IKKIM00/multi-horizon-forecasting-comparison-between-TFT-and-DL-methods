@@ -29,3 +29,8 @@ You can download the dataset through this github link: https://github.com/zhouha
 # How to use
 ## For Deep Learning(DL) Methods
 Through each `ipynb` files, you can choose model you want to use. 
+
+## For TFT Methods
+Through `ipynb` files that have `tft` in the file name, you can see the whole procedure. 
+
+Before running cells, make sure to clone original tft github page: https://github.com/google-research/google-research/tree/master/tft. 
